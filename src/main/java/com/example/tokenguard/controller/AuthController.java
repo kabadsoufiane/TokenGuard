@@ -28,12 +28,23 @@ public class AuthController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
+    @GetMapping("/users/{username}")
+    public ResponseEntity<User> getUserByUsername(@PathVariable String username){
+        User user = userService.getUserByUsername(username);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @GetMapping("/users/{email}")
+    public ResponseEntity<User> getUserByEmail(@PathVariable String email){
+        User user = userService.getUserByEmail(email);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
     @GetMapping("/users/{id_user}")
     public ResponseEntity<User> getUserById(@PathVariable int id_user){
         User user = userService.getUserById(id_user);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
-
     @PostMapping("/sign-in")
     public ResponseEntity<String> authenticateUser(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         User user = userService.findByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());

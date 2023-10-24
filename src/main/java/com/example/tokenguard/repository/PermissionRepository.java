@@ -11,6 +11,11 @@ public interface PermissionRepository extends CrudRepository<Permission, Long> {
     Permission save(Permission permission);
     Iterable<Permission> findAll();
     Optional<Permission> findById(Long id);
+
+    Optional<Permission> findByName(String name);
+
     void deleteById(Long id);
+
+    void deleteByName(String name);
 
 }

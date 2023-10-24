@@ -10,7 +10,16 @@ public interface UserRepository extends CrudRepository<User, Long> {
     User save(User user);
     Iterable<User> findAll();
     Optional<User> findById(Long id);
-    void deleteById(Long id);
 
     User findByEmail(String email);
+
+    Optional<User> findByUsername(String userName);
+
+    void deleteById(Long id);
+
+    void deleteByUsername(String userName);
+
+    void deleteByEmail(String email);
+
+
 }

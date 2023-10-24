@@ -11,5 +11,10 @@ public interface RoleRepository extends CrudRepository<Role, Long> {
     Role save(Role role);
     Iterable<Role> findAll();
     Optional<Role> findById(Long id);
+
+    Optional<Role> findByName(String name);
+
     void deleteById(Long id);
+
+    void deleteByName(String name);
 }

@@ -22,8 +22,7 @@ public class UserService {
 
     public User findByEmailAndPassword(String email, String password) {
         User user = userRepository.findByEmail(email);
-        /*System.out.println(user.getPassword());
-        System.out.println(bCryptPasswordEncoder.encode(password));*/
+
         if (user != null &&  bCryptPasswordEncoder.matches(password, user.getPassword())) {
             return user;
         }
@@ -38,11 +37,26 @@ public class UserService {
         return (List<User>) userRepository.findAll();
     }
 
+    public User getUserByEmail(@NonNull String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public User getUserByUsername(@NonNull String userName) {
+        return userRepository.findByUsername(userName).orElse(null);
+    }
     public User getUserById(@NonNull long id_user) {
         return userRepository.findById(id_user).orElse(null);
     }
 
     public void deleteUserById(@NonNull long id_user) {
         userRepository.deleteById(id_user);
+    }
+
+    public void deleteUserByUsername(@NonNull String username) {
+        userRepository.deleteByUsername(username);
+    }
+
+    public void deleteUserByEmail(@NonNull String email) {
+        userRepository.deleteByEmail(email);
     }
 }
