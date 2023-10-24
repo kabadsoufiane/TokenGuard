@@ -33,13 +33,13 @@ public class PermissionController {
         return new ResponseEntity<>(permissions, HttpStatus.OK);
     }
 
-    @GetMapping("/get-permissions/{id_permission}")
+    @GetMapping("/get-permissions/id/{id_permission}")
     public ResponseEntity<Permission> getPermissionById(@PathVariable Long id_permission) {
         Permission permission = permissionService.getPermissionById(id_permission);
         return new ResponseEntity<>(permission, HttpStatus.OK);
     }
 
-    @GetMapping("/get-permissions/{permission_name}")
+    @GetMapping("/get-permissions/name/{permission_name}")
     public ResponseEntity<Permission> getPermissionByName(@PathVariable String permission_name) {
         Permission permission = permissionService.getPermissionByName(permission_name);
         return new ResponseEntity<>(permission, HttpStatus.OK);

@@ -28,19 +28,19 @@ public class AuthController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @GetMapping("/users/{username}")
+    @GetMapping("/users/username/{username}")
     public ResponseEntity<User> getUserByUsername(@PathVariable String username){
         User user = userService.getUserByUsername(username);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @GetMapping("/users/{email}")
+    @GetMapping("/users/email/{email}")
     public ResponseEntity<User> getUserByEmail(@PathVariable String email){
         User user = userService.getUserByEmail(email);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @GetMapping("/users/{id_user}")
+    @GetMapping("/users/id/{id_user}")
     public ResponseEntity<User> getUserById(@PathVariable int id_user){
         User user = userService.getUserById(id_user);
         return new ResponseEntity<>(user, HttpStatus.OK);

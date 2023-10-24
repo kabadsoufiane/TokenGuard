@@ -34,13 +34,13 @@ public class RoleController {
         return new ResponseEntity<>(roles, HttpStatus.OK);
     }
 
-    @GetMapping("/roles/{id_role}")
+    @GetMapping("/roles/id/{id_role}")
     public ResponseEntity<Role> getRoleById(@PathVariable Long id_role) {
         Role role = roleService.getRoleById(id_role);
         return new ResponseEntity<>(role, HttpStatus.OK);
     }
 
-    @GetMapping("/roles/{role_name}")
+    @GetMapping("/roles/name/{role_name}")
     public ResponseEntity<Role> getRoleById(@PathVariable String role_name) {
         Role role = roleService.getRoleByName(role_name);
         return new ResponseEntity<>(role, HttpStatus.OK);
