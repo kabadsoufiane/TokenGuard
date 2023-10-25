@@ -1,5 +1,6 @@
 package com.example.tokenguard.controller;
 
+import com.example.tokenguard.domain.Role;
 import com.example.tokenguard.domain.User;
 import com.example.tokenguard.dto.LoginRequest;
 import com.example.tokenguard.service.UserService;
@@ -38,7 +39,11 @@ public class AuthController {
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", user.getEmail());
-        // add more claims as needed
+        claims.put("roles", user.getRoles());
+        claims.put("permissions", user
+                                    .getRoles()
+                                    .stream()
+                                    .map(Role::getPermissions));
 
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("access_token", jwtUtil.generateToken(claims));
