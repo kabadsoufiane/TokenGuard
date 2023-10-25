@@ -4,13 +4,15 @@ import com.example.tokenguard.domain.User;
 import com.example.tokenguard.dto.LoginRequest;
 import com.example.tokenguard.service.UserService;
 import com.example.tokenguard.utils.JwtUtil;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -22,40 +24,27 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    @GetMapping("/users")
-    public ResponseEntity<List<User>> getUsers(){
-        List<User> users = userService.getAllUsers();
-        return new ResponseEntity<>(users, HttpStatus.OK);
-    }
 
-    @GetMapping("/users/username/{username}")
-    public ResponseEntity<User> getUserByUsername(@PathVariable String username){
-        User user = userService.getUserByUsername(username);
-        return new ResponseEntity<>(user, HttpStatus.OK);
-    }
-
-    @GetMapping("/users/email/{email}")
-    public ResponseEntity<User> getUserByEmail(@PathVariable String email){
-        User user = userService.getUserByEmail(email);
-        return new ResponseEntity<>(user, HttpStatus.OK);
-    }
-
-    @GetMapping("/users/id/{id_user}")
-    public ResponseEntity<User> getUserById(@PathVariable int id_user){
-        User user = userService.getUserById(id_user);
-        return new ResponseEntity<>(user, HttpStatus.OK);
-    }
     @PostMapping("/sign-in")
-    public ResponseEntity<String> authenticateUser(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
-        User user = userService.findByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
+    public ResponseEntity<Map<String, String>> authenticateUser(@RequestBody LoginRequest loginRequest,
+                                                                HttpServletResponse response) {
+        User user = userService
+                .findByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
 
         if (user == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return null;
         }
 
-        return new ResponseEntity<>(jwtUtil.generateToken(user.getUsername()), HttpStatus.OK);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("email", user.getEmail());
+        // add more claims as needed
+
+        Map<String, String> responseBody = new HashMap<>();
+        responseBody.put("access_token", jwtUtil.generateToken(claims));
+        return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
+
     @PostMapping("/sign-up")
     public ResponseEntity<User> signUp(@RequestBody User user) {
         try {
@@ -67,10 +56,18 @@ public class AuthController {
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/deleteUser")
-    public ResponseEntity<Void> deleteUser(@PathVariable int id_user) {
-        userService.deleteUserById(id_user);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+    @GetMapping("/validate-token")
+    public ResponseEntity<String> validateToken(@RequestHeader("Authorization") String token) {
+        try {
+            // Removing Bearer prefix if it exists
+            if (token != null && token.startsWith("Bearer ")) {
+                token = token.substring(7);
+            }
 
+            Claims claims = jwtUtil.validateToken(token);
+            return ResponseEntity.ok("Token is valid. Subject: " + claims.getSubject());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+    }
 }

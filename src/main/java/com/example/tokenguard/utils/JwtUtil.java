@@ -1,13 +1,12 @@
 package com.example.tokenguard.utils;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import org.hibernate.cfg.Environment;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.jsonwebtoken.*;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Map;
 
 @Service
 public class JwtUtil {
@@ -16,15 +15,28 @@ public class JwtUtil {
     private String jwtSecret;
     private final long jwtExpirationInMs = 3600000; // 1 hour
 
-    public String generateToken(String email) {
+    public String generateToken(Map<String, Object> claims) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
         return Jwts.builder()
-                .setSubject(email)
+                .setClaims(claims) // setting the claims
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }
+
+    public Claims validateToken(String token) {
+        try {
+            Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
+            System.out.println(claims);
+            return claims;
+        } catch (SignatureException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException e) {
+            throw new RuntimeException("Invalid token");
+        } catch (ExpiredJwtException e) {
+            throw new RuntimeException("Token has expired");
+        }
+    }
+
 }
