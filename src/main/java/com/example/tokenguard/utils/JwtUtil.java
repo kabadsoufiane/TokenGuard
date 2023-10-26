@@ -33,8 +33,6 @@ public class JwtUtil {
     public Claims validateToken(String token) {
         try {
             Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
-            List<String> roles = (List<String>) claims.get("roles");
-            List<String> permissions = (List<String>) claims.get("permissions");
             System.out.println(claims);
             return claims;
         } catch (SignatureException | MalformedJwtException | UnsupportedJwtException | IllegalArgumentException e) {

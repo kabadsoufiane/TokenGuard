@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/auth")
@@ -43,7 +44,8 @@ public class AuthController {
         claims.put("permissions", user
                                     .getRoles()
                                     .stream()
-                                    .map(Role::getPermissions));
+                                    .map(Role::getPermissions)
+                                    .collect(Collectors.toList()));
 
         Map<String, String> responseBody = new HashMap<>();
         responseBody.put("access_token", jwtUtil.generateToken(claims));
